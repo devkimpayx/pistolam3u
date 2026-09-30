@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PistolaM3U</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --neon-color: #39ff14; /* Verde neon vibrante para o botão */
+            --neon-shadow: rgba(57, 255, 20, 0.4);
+            --neon-purple: #bc13fe; /* Roxo neon vibrante para o título e detalhes */
+            --neon-purple-shadow: rgba(188, 19, 254, 0.4);
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 70%);
+        }
+
+        .neon-text {
+            color: #ffffff; /* Núcleo branco com brilho roxo */
+            text-shadow: 
+                0 0 5px var(--neon-purple-shadow), 
+                0 0 10px var(--neon-purple-shadow), 
+                0 0 20px var(--neon-purple), 
+                0 0 40px var(--neon-purple);
+        }
+
+        .btn-neon {
+            position: relative;
+            display: inline-block;
+            padding: 12px 24px;
+            color: var(--neon-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+            text-decoration: none;
+            overflow: hidden;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid var(--neon-color);
+            border-radius: 8px;
+            background: rgba(57, 255, 20, 0.05); /* Fundo levemente esverdeado */
+            box-shadow: 
+                0 0 10px var(--neon-shadow), 
+                inset 0 0 15px var(--neon-shadow);
+            cursor: pointer;
+        }
+
+        .btn-neon:hover {
+            background: var(--neon-color);
+            color: #000000; /* Texto preto para contraste máximo */
+            border-color: #ffffff;
+            box-shadow: 
+                0 0 10px var(--neon-color), 
+                0 0 20px var(--neon-color), 
+                0 0 40px var(--neon-color), 
+                0 0 80px var(--neon-color);
+        }
+
+        .btn-neon:active {
+            transform: scale(0.95);
+            box-shadow: 
+                0 0 5px var(--neon-color), 
+                0 0 10px var(--neon-color);
+        }
+
+        .input-dark {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .input-dark:focus {
+            outline: none;
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 12px var(--neon-purple-shadow);
+        }
+
+        .result-box {
+            font-family: 'JetBrains Mono', monospace;
+            word-break: break-all;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #334155;
+            border-left: 4px solid var(--neon-purple);
+        }
+
+        /* Animação suave para exibir o resultado */
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Container Central -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-700 p-6 sm:p-8">
+            
+            <!-- Título -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-extrabold tracking-wider neon-text mb-2">PistolaM3U</h1>
+                <p class="text-gray-400 text-sm">Gerador de Links Premium</p>
+            </div>
+
+            <!-- Formulário -->
+            <div class="space-y-5">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Usuário</label>
+                    <input type="text" id="username" placeholder="Digite seu usuário" 
+                           class="w-full px-4 py-3 rounded-lg input-dark focus:ring-0">
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Senha</label>
+                    <input type="password" id="password" placeholder="Digite sua senha" 
+                           class="w-full px-4 py-3 rounded-lg input-dark focus:ring-0">
+                </div>
+
+                <div class="pt-4 flex justify-center">
+                    <button id="generateBtn" class="btn-neon w-full sm:w-auto">
+                        <span class="flex items-center justify-center gap-2">
+                            <span>♻️</span> Gerar
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Área do Link Gerado (Oculta por padrão) -->
+            <div id="resultContainer" class="hidden mt-8">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-sm font-medium text-gray-300">🔗 Link Gerado:</label>
+                </div>
+                
+                <div class="result-box rounded-lg p-4 text-sm text-gray-200 mb-4 relative group">
+                    <div id="generatedLink" class="pr-8">Nenhum link gerado ainda.</div>
+                </div>
+
+                <button id="copyBtn" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 border border-gray-600">
+                    <span id="copyIcon">📑</span> 
+                    <span id="copyText">Copiar</span>
+                </button>
+            </div>
+            
+            <!-- Mensagem de erro -->
+            <p id="errorMsg" class="hidden text-red-400 text-sm text-center mt-4 font-medium"></p>
+        </div>
+    </main>
+
+    <!-- Rodapé de Apoio ao Criador -->
+    <footer class="w-full text-center py-6 border-t border-gray-800 bg-gray-900/50 mt-auto">
+        <div class="max-w-3xl mx-auto px-4 flex flex-col items-center justify-center gap-2">
+            <p class="text-gray-400 text-sm font-medium">Apoio ao Criador ☕</p>
+            <div class="flex flex-col sm:flex-row items-center gap-2 text-xs sm:text-sm bg-black/40 px-4 py-2 rounded-full border border-gray-800">
+                <span class="text-[#f7931a] font-bold">Bitcoin:</span>
+                <span class="font-mono text-gray-300 break-all select-all">bc1qjne0x7vsyn4hx5mym5rm26k38ydjwx256scrn5</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateBtn = document.getElementById('generateBtn');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const resultContainer = document.getElementById('resultContainer');
+            const generatedLinkEl = document.getElementById('generatedLink');
+            const copyBtn = document.getElementById('copyBtn');
+            const copyText = document.getElementById('copyText');
+            const copyIcon = document.getElementById('copyIcon');
+            const errorMsg = document.getElementById('errorMsg');
+
+            let currentLink = '';
+
+            // Função para gerar o link
+            generateBtn.addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                // Resetar estados
+                errorMsg.classList.add('hidden');
+                
+                if (!username || !password) {
+                    errorMsg.textContent = '⚠️ Por favor, preencha Usuário e Senha.';
+                    errorMsg.classList.remove('hidden');
+                    return;
+                }
+
+                // Gerar a URL baseada no template
+                // URL Template: http://bestwayap.click/get.php?username=*******&password=*******&type=m3u_plus&output=ts
+                currentLink = `http://bestwayap.click/get.php?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&type=m3u_plus&output=ts`;
+
+                // Exibir resultado
+                generatedLinkEl.textContent = currentLink;
+                resultContainer.classList.remove('hidden');
+                resultContainer.classList.add('fade-in');
+
+                // Resetar botão de copiar
+                copyText.textContent = 'Copiar';
+                copyIcon.textContent = '📑';
+                copyBtn.classList.remove('bg-green-600', 'hover:bg-green-500', 'border-green-500');
+                copyBtn.classList.add('bg-gray-700', 'hover:bg-gray-600', 'border-gray-600');
+            });
+
+            // Função para copiar o link
+            copyBtn.addEventListener('click', () => {
+                if (!currentLink) return;
+
+                // Cria um elemento input temporário para executar a cópia, garantindo compatibilidade global
+                const tempInput = document.createElement('input');
+                tempInput.value = currentLink;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                
+                try {
+                    document.execCommand('copy');
+                    
+                    // Feedback visual de sucesso
+                    copyText.textContent = 'Copiado!';
+                    copyIcon.textContent = '✅';
+                    
+                    // Altera a cor do botão para verde temporariamente
+                    copyBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600', 'border-gray-600');
+                    copyBtn.classList.add('bg-green-600', 'hover:bg-green-500', 'border-green-500');
+                    
+                    setTimeout(() => {
+                        copyText.textContent = 'Copiar';
+                        copyIcon.textContent = '📑';
+                        copyBtn.classList.remove('bg-green-600', 'hover:bg-green-500', 'border-green-500');
+                        copyBtn.classList.add('bg-gray-700', 'hover:bg-gray-600', 'border-gray-600');
+                    }, 2000);
+                } catch (err) {
+                    alert('Erro ao copiar. Por favor, selecione e copie manualmente.');
+                }
+                
+                document.body.removeChild(tempInput);
+            });
+
+            // Permitir pressionar "Enter" nos inputs para gerar o link
+            [usernameInput, passwordInput].forEach(input => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        generateBtn.click();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
